@@ -1,0 +1,255 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+
+    <title>Лабораторная работа №3. Зиганшин Никита ИУ8-51</title>
+</head>
+
+<body>
+    <script type="text/javascript">
+        class Point
+        {
+            constructor(x, y)
+            {
+                this.x = x;
+
+                this.y = y;
+            }
+        }
+
+        // Функция для рисования пикселя с заданными координатами
+
+        function createPixel(context, x, y)
+        {
+            context.fillRect(x, y, 1, 1);
+        }
+
+        // Функция для рисования линии с заданными координатами начала и конца
+
+        function createLine(context, x_0, y_0, x_1, y_1)
+        {
+            var A_1 = x_1 - x_0;
+
+            var B_1 = y_1 - y_0;
+
+            var ort;
+
+            if(Math.abs(B_1) <= Math.abs(A_1))
+            {
+                ort = 1;
+            }
+            else
+            {
+                ort = 0;
+            }
+
+            var A_2;
+
+            var B_2;
+
+            var x_n;
+
+            var y_n;
+            
+            var dy = 1;
+
+            if(ort)
+            {
+                A_2 = Math.abs(A_1);
+
+                B_2 = Math.abs(B_1);
+
+                if(x_0 <= x_1)
+                {
+                    x_n = x_0;
+
+                    y_n = y_0;
+
+                    if(B_1 < 0)
+                    {
+                        dy = -1;
+                    }
+                }
+                else
+                {
+                    x_n = x_1;
+
+                    y_n = y_1;
+
+                    if(B_1 > 0)
+                    {
+                        dy = -1;
+                    }
+                }
+            }
+            else
+            {
+                A_2 = Math.abs(B_1);
+
+                B_2 = Math.abs(A_1);
+
+                if(y_0 <= y_1)
+                {
+                    x_n = x_0;
+
+                    y_n = y_0;
+
+                    if(A_1 < 0)
+                    {
+                        dy = -1;
+                    }
+                }
+                else
+                {
+                    x_n = x_1;
+
+                    y_n = y_1;
+
+                    if(A_1 > 0)
+                    {
+                        dy = -1;
+                    }
+                }
+            }
+
+            var d = 2 * B_2 - A_2;
+
+            var x = 0;
+
+            var y = 0;
+
+            for(x = 0; x < A_2; ++x)
+            {
+                if(d >= 0)
+                {
+                    y += dy;
+
+                    d += 2 * (B_2 - A_2);
+                }
+                else
+                {
+                    d += 2 * B_2;
+                }
+
+                if(ort)
+                {
+                    createPixel(context, x + x_n, y + y_n);
+                }
+                else
+                {
+                    createPixel(context, y + x_n, x + y_n);
+                }
+            }
+        }
+
+        // Функция для рисования кривой с заданными координатами всех её точек
+
+        function createCurve(context, points)
+        {
+            var points_1 = [];
+
+            var points_2 = [];
+
+            var points_3 = [];
+
+            for(var i = 0; i < points.length - 1; ++i)
+            {
+                let point_1 = new Point((points[i].x + points[i + 1].x) / 2, (points[i].y + points[i + 1].y) / 2);
+
+                points_3.push(point_1);
+            }
+
+            let point_2 = new Point((points[0].x + 2 * points[1].x + points[2].x) / 4, (points[0].y + 2 * points[1].y + points[2].y) / 4);
+
+            points_1.push(points[0]);
+
+            points_1.push(points_3[0]);
+
+            points_1.push(point_2);
+
+            points_2.push(point_2);
+
+            points_2.push(points_3[1]);
+
+            points_2.push(points[2]);
+
+            var A_1 = point_2.x - points[0].x;
+
+            var B_1 = point_2.y - points[0].y;
+
+            if(B_1 / A_1 * (points_3[0].x - points[0].x) + points[0].y - points_3[0].y >= 1)
+            {
+                createCurve(context, points_1);
+            }
+            else
+            {
+                createLine(context, points[0].x, points[0].y, point_2.x, point_2.y);
+            }
+            
+            var A_2 = points[2].x - point_2.x;
+
+            var B_2 = points[2].y - point_2.y;
+
+            if(B_2 / A_2 * (points_3[1].x - points[2].x) + points[2].y - points_3[1].y >= 1)
+            {
+                createCurve(context, points_2);
+            }
+            else
+            {
+                createLine(context, points[2].x, points[2].y, point_2.x, point_2.y);
+            }
+        }
+    </script>
+
+    <p>Лабораторная работа №3</p>
+
+    <canvas id="field" height="500" width="500">
+        <script type="text/javascript">
+            var canvas = document.getElementById("field");
+            
+            var context = canvas.getContext("2d");
+
+            var pointAngle = [];
+
+            var pointCount = 0;
+
+            // Обработчик события нажатия на canvas
+
+            function onClick()
+            {
+                if(event.which == 1)
+                {
+                    var x = event.offsetX;
+
+                    var y = event.offsetY;
+
+                    let point = new Point(x, y);
+
+                    pointAngle.push(point);
+
+                    ++pointCount;
+
+                    if(pointCount > 1)
+                    {
+                        createLine(context, pointAngle[pointCount - 1].x, pointAngle[pointCount - 1].y, pointAngle[pointCount - 2].x, pointAngle[pointCount - 2].y);
+                    }
+
+                    createPixel(context, point.x, point.y);
+                }
+
+                if(event.which == 2)
+                {
+                    var x = event.offsetX;
+
+                    var y = event.offsetY;
+
+                    createCurve(context, pointAngle);
+                }
+            }
+
+            canvas.addEventListener("click", onClick);
+        </script>
+    </canvas>
+</body>
+</html>

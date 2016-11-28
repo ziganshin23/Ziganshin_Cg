@@ -1,0 +1,92 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+
+    <title>Лабораторная работа №1. Зиганшин Никита ИУ8-51</title>
+</head>
+
+<body>
+    <p>Лабораторная работа №1</p>
+
+    <canvas id="field" height="500" width="500">
+        <script type="text/javascript">
+            var canvas = document.getElementById("field");
+            
+            var context = canvas.getContext("2d");
+
+            // Рисование квадрата со стороной 40px и с вершиной в точке (10; 10)
+
+            context.fillRect(10, 10, 40, 40);
+
+            // Рисование прямой линии толщиной 1px и с началом в точке (80; 50)
+
+            var beginX = 80;
+            var beginY = 50;
+
+            var endX = 400;
+            var endY = 80;
+
+            var deltaX = Math.abs(endX - beginX);
+            var deltaY = Math.abs(endY - beginY);
+
+            var error = 0;
+
+            var temporary = beginY;
+
+            for(var i = beginX; i <= endX; ++i)
+            {
+                context.fillRect(i, temporary, 10, 10);
+
+                error += deltaY;
+
+                if(2 * error >= deltaX)
+                {
+                    --temporary;
+
+                    error = error - deltaX;
+                }
+            }
+
+            // Рисование дуги с радиусом 50px и центром в точке (100; 100)
+
+            var A = 100;
+            var B = 100;
+
+            var R = 50;
+
+            var X = -R;
+            var Y = 0;
+
+            var F = 1 - R;
+
+            var dFS = 3;
+            var dFD = 5 - 2 * R;
+
+            while(X + Y <= 0)
+            {
+                context.fillRect(A + X, B + Y, 1, 1);
+
+                ++Y;
+
+                if(F > 0)
+                {
+                    ++X;
+
+                    F += dFD;
+
+                    dFD += 4;
+                }
+                else
+                {
+                    F += dFS;
+
+                    dFD += 2;
+                }
+
+                dFS += 2;
+            }
+        </script>
+    </canvas>
+</body>
+</html>
